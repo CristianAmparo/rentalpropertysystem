@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PropertyType {
+  APARTMENT
+  HOUSE
+  CONDO
+  TOWNHOUSE
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  password      String?
+  name          String
+  role          Role      @default(USER)
+  avatar        String?
+  phone         String?
+  banned        Boolean   @default(false)
+  resetToken    String?
+  resetTokenExpiry DateTime?
+  
+  // Relations
+  applications  Application[]
+  savedProps    SavedProperty[]
+  messagesSent  Message[] @relation("MessageSender")
+  messagesRecv  Message[] @relation("MessageReceiver")
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Property {
+  id            String    @id @default(uuid())
+  title         String
+  description   String    @db.Text
+  price         Float
+  address       String
+  city          String
+  state         String
+  zipCode       String
+  beds          Int
+  baths         Float
+  sqft          Int?
+  type          PropertyType
+  amenities     Json?     // Storing array of amenities
+  images        Json?     // Storing array of image URLs
+  isVacant      Boolean   @default(true)
+  isArchived    Boolean   @default(false)
+
+  // Relations
+  applications  Application[]
+  savedBy       SavedProperty[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Application {
+  id            String    @id @default(uuid())
+  status        ApplicationStatus @default(PENDING)
+  notes         String?   @db.Text
+  documents     Json?     // Storing uploaded document URLs
+  
+  // Relations
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SavedProperty {
+  id            String    @id @default(uuid())
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId    String
+  property      Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, propertyId])
+}
+
+model Message {
+  id            String    @id @default(uuid())
+  content       String    @db.Text
+  isRead        Boolean   @default(false)
+
+  senderId      String
+  sender        User      @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId    String
+  receiver      User      @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime  @default(now())
+}
