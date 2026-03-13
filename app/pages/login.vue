@@ -55,6 +55,10 @@
 <script setup>
 import { reactive, ref } from 'vue'
 
+definePageMeta({
+  layout: false
+})
+
 const { login } = useAuth()
 const isLoading = ref(false)
 const errorMsg = ref('')

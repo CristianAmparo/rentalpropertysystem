@@ -59,6 +59,10 @@
 <script setup>
 import { reactive, ref } from 'vue'
 
+definePageMeta({
+  layout: false
+})
+
 const isLoading = ref(false)
 const errorMsg = ref('')
 const success = ref(false)
