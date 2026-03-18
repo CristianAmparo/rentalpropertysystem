@@ -48,8 +48,12 @@ useHead({
   title: 'Saved Properties - RentalProperty',
 })
 
-const { getSavedProperties } = useProperties()
-const savedProperties = computed(() => getSavedProperties())
+const { savedPropertyIds } = useProperties()
+const { data: savedProps, status: savedStatus } = await useFetch('/api/properties', {
+  query: { ids: () => savedPropertyIds.value.length > 0 ? savedPropertyIds.value.join(',') : 'none' }
+})
+
+const savedProperties = computed(() => savedProps.value || [])
 
 const links = [
   { label: 'Dashboard', to: '/dashboard' },

@@ -25,6 +25,10 @@ export const useAuth = () => {
         method: 'POST',
         body: credentials
       })
+      // Set an indicator cookie so the frontend knows the user has an active session
+      const authToken = useCookie('auth_token')
+      authToken.value = 'active'
+      
       await fetchUser()
       return { success: true, data }
     } catch (error: any) {
@@ -38,6 +42,9 @@ export const useAuth = () => {
         method: 'POST',
         body: userData
       })
+      const authToken = useCookie('auth_token')
+      authToken.value = 'active'
+
       await fetchUser()
       return { success: true, data }
     } catch (error: any) {
@@ -48,6 +55,10 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       await $fetch('/api/auth/logout', { method: 'POST' })
+      // Clear the session indicator cookie
+      const authToken = useCookie('auth_token')
+      authToken.value = null
+      
       user.value = null
       isAuthenticated.value = false
       navigateTo('/login')

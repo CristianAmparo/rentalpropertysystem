@@ -2,9 +2,10 @@
   <UCard class="flex flex-col h-full shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 p-0">
     <div class="aspect-4/3 bg-gray-200 dark:bg-gray-800 relative w-full overflow-hidden group block">
       <NuxtLink :to="`/properties/${property.id}`" class="block w-full h-full">
-        <img v-if="property.image" :src="property.image" :alt="property.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div v-else class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500">
-          <UIcon name="i-heroicons-photo" class="w-12 h-12" />
+        <img v-if="property.image && !imageError" :src="property.image" :alt="property.title" @error="imageError = true" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div v-else class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800">
+          <UIcon name="i-heroicons-photo" class="w-12 h-12 mb-2" />
+          <span class="text-xs font-medium text-gray-400">No Image Available</span>
         </div>
       </NuxtLink>
 
@@ -15,7 +16,7 @@
       
       <!-- Price overlay -->
       <div class="absolute bottom-3 left-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 py-1.5 rounded-md font-bold text-primary-600 dark:text-primary-400 shadow-sm">
-        ${{ property.price.toLocaleString() }}<span class="text-xs font-normal text-gray-500 dark:text-gray-400"> / mo</span>
+        ₱{{ property.price.toLocaleString() }}<span class="text-xs font-normal text-gray-500 dark:text-gray-400"> / mo</span>
       </div>
     </div>
 
@@ -51,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useProperties } from '../composables/useProperties'
 
 const props = defineProps({
@@ -60,6 +61,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const imageError = ref(false)
 
 const { isPropertySaved, toggleSaveProperty } = useProperties()
 

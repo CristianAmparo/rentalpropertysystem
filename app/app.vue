@@ -6,10 +6,13 @@
 </template>
 
 <script setup>
-const { fetchUser, isAuthenticated } = useAuth()
+const { fetchUser } = useAuth()
+const authToken = useCookie('auth_token')
 
-// Fetch user session on app load
+// Fetch user session on app load only if they have an active token session cookie
 onMounted(() => {
-  fetchUser()
+  if (authToken.value) {
+    fetchUser()
+  }
 })
 </script>

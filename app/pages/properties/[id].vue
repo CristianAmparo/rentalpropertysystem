@@ -1,6 +1,6 @@
 <template>
   <UContainer class="px-4 py-4 md:px-8 md:py-8">
-    <UButton to="/properties" variant="ghost" color="gray" leading-icon="i-heroicons-arrow-left" class="mb-6">
+    <UButton to="/properties" variant="ghost" color="neutral" leading-icon="i-heroicons-arrow-left" class="mb-6">
       Back to Properties
     </UButton>
 
@@ -17,8 +17,11 @@
       <div class="lg:col-span-2 space-y-8">
         <!-- Main Image -->
         <div class="aspect-video bg-gray-200 dark:bg-gray-800 rounded-xl flex items-center justify-center relative overflow-hidden">
-          <img v-if="property.image" :src="property.image" :alt="property.title" class="w-full h-full object-cover" />
-          <UIcon v-else name="i-heroicons-photo" class="w-16 h-16 text-gray-400" />
+          <img v-if="property.image && !imageError" :src="property.image" :alt="property.title" @error="imageError = true" class="w-full h-full object-cover" />
+          <div v-else class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+            <UIcon name="i-heroicons-photo" class="w-16 h-16 mb-2" />
+            <span class="text-sm font-medium">No Image Available</span>
+          </div>
         </div>
 
         <div>
@@ -80,7 +83,7 @@
             <UButton block size="lg" color="primary" @click="handleApply" class="cursor-pointer font-semibold">
               Apply Now
             </UButton>
-            <UButton block size="lg" :color="isSaved ? 'red' : 'gray'" :variant="isSaved ? 'soft' : 'solid'" :icon="isSaved ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" @click="handleSave" class="cursor-pointer transition-colors">
+            <UButton block size="lg" :color="isSaved ? 'error' : 'neutral'" :variant="isSaved ? 'soft' : 'solid'" :icon="isSaved ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" @click="handleSave" class="cursor-pointer transition-colors">
               {{ isSaved ? 'Saved to Dashboard' : 'Save Property' }}
             </UButton>
           </div>
@@ -91,17 +94,19 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProperties } from '../../composables/useProperties'
+
+const imageError = ref(false)
 
 const route = useRoute()
 const router = useRouter()
 const { isAuthenticated } = useAuth()
-const { getPropertyById, toggleSaveProperty, isPropertySaved } = useProperties()
+const { toggleSaveProperty, isPropertySaved } = useProperties()
 
 const propertyId = route.params.id
-const property = computed(() => getPropertyById(propertyId))
+const { data: property, status: propertyStatus } = await useFetch(`/api/properties/${propertyId}`)
 
 useHead({
   title: computed(() => property.value ? `${property.value.title} - RentalProperty` : 'Property Not Found'),

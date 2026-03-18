@@ -80,7 +80,6 @@
 
 <script setup>
 import { reactive, ref, computed } from 'vue'
-import { useProperties } from '../../../composables/useProperties'
 import { useApplications } from '../../../composables/useApplications'
 
 // Only logged in users can apply
@@ -91,8 +90,7 @@ definePageMeta({
 const route = useRoute()
 const propertyId = route.params.id
 
-const { getPropertyById } = useProperties()
-const property = computed(() => getPropertyById(propertyId))
+const { data: property, status: propertyStatus } = await useFetch(`/api/properties/${propertyId}`)
 
 useHead({
   title: computed(() => property.value ? `Apply for ${property.value.title}` : 'Apply for Property'),
