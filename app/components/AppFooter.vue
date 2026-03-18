@@ -3,8 +3,8 @@
     <UContainer>
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
         <div class="md:col-span-1">
-          <NuxtLink to="/" class="flex items-center gap-2 font-bold text-xl text-primary-500 mb-4">
-            <UIcon name="i-heroicons-home-modern" class="w-8 h-8" />
+          <NuxtLink to="/" class="flex items-center gap-2 font-bold text-lg md:text-xl text-primary-500 mb-4">
+            <UIcon name="i-heroicons-home-modern" class="w-6 h-6 md:w-8 md:h-8" />
             <span>RentalProperty</span>
           </NuxtLink>
           <p class="text-sm text-gray-500 dark:text-gray-400">

@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 bg-gray-50 dark:bg-gray-950 min-h-screen">
-    <UContainer>
+    <UContainer class="px-4 py-4 md:px-8 md:py-8">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Tenant Dashboard</h1>
@@ -21,7 +21,7 @@
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Saved Properties</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ savedPropertyIds.length }}</p>
             </div>
           </div>
           <NuxtLink to="/dashboard/saved-properties" class="text-sm text-primary-600 hover:text-primary-500 mt-4 inline-block font-medium">View saved &rarr;</NuxtLink>
@@ -34,7 +34,7 @@
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Active Applications</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ activeAppCount }}</p>
             </div>
           </div>
           <NuxtLink to="/dashboard/applications" class="text-sm text-yellow-600 hover:text-yellow-500 mt-4 inline-block font-medium">Track status &rarr;</NuxtLink>
@@ -113,6 +113,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useProperties } from '../../composables/useProperties'
+import { useApplications } from '../../composables/useApplications'
+
 definePageMeta({
   middleware: 'auth'
 })
@@ -122,6 +126,10 @@ useHead({
 })
 
 const { user, logout } = useAuth()
+const { savedPropertyIds } = useProperties()
+const { getActiveApplicationsCount } = useApplications()
+
+const activeAppCount = computed(() => getActiveApplicationsCount())
 
 const handleLogout = async () => {
   await logout()

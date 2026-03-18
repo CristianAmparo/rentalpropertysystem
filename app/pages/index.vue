@@ -6,7 +6,7 @@
       <div class="absolute inset-0 bg-primary-50 dark:bg-gray-900 -z-10"></div>
       <div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl -z-10"></div>
       
-      <UContainer>
+      <UContainer class="px-4 py-4 md:px-8 md:py-8">
         <div class="max-w-3xl">
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
             Find Your Next Perfect Home with Ease
@@ -24,7 +24,7 @@
 
     <!-- Featured Properties Placeholder -->
     <section class="py-16 lg:py-24 bg-white dark:bg-gray-950">
-      <UContainer>
+      <UContainer class="px-4 py-4 md:px-8 md:py-8">
         <div class="flex items-center justify-between mb-10">
           <div>
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Featured Properties</h2>
@@ -38,7 +38,7 @@
         <!-- Placeholder Grid (will be replaced with actual data later) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <UCard v-for="i in 3" :key="i" class="flex flex-col h-full shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800" :ui="{ body: { padding: '!p-0' } }">
-            <div class="aspect-[4/3] bg-gray-200 dark:bg-gray-800 relative w-full overflow-hidden">
+            <div class="aspect-4/3 bg-gray-200 dark:bg-gray-800 relative w-full overflow-hidden">
               <div class="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 <UIcon name="i-heroicons-photo" class="w-12 h-12" />
               </div>

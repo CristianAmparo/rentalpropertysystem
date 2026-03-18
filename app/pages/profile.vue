@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 bg-gray-50 dark:bg-gray-950 min-h-screen">
-    <UContainer>
+    <UContainer class="px-4 py-4 md:px-8 md:py-8">
       <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">User Profile</h1>
         

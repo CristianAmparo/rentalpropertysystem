@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 md:py-24">
-    <UContainer>
+    <UContainer class="px-4 py-4 md:px-8 md:py-8">
       <div class="max-w-3xl mx-auto prose dark:prose-invert">
         <h1>Privacy Policy</h1>
         <p class="text-sm text-gray-500">Last Updated: March 2026</p>

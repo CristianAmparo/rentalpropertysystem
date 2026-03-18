@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 bg-gray-50 dark:bg-gray-950 min-h-screen">
-    <UContainer>
+    <UContainer class="px-4 py-4 md:px-8 md:py-8">
       <div class="max-w-2xl mx-auto">
         <div class="mb-8">
           <UBreadcrumb :links="links" class="mb-4" />
@@ -9,15 +9,15 @@
         </div>
 
         <UCard class="shadow-md hover:shadow-lg transition-shadow">
-          <!-- Using placeholder property details since dynamic fetching isn't wired yet -->
-          <div class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mb-6 border border-gray-200 dark:border-gray-700">
-            <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center shrink-0">
-               <UIcon name="i-heroicons-home-modern" class="w-8 h-8 text-gray-400" />
+          <div v-if="property" class="flex items-start gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg mb-6 border border-gray-200 dark:border-gray-700">
+            <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center shrink-0 overflow-hidden">
+               <img v-if="property.image" :src="property.image" class="w-full h-full object-cover" />
+               <UIcon v-else name="i-heroicons-home-modern" class="w-8 h-8 text-gray-400" />
             </div>
             <div>
-              <h3 class="font-semibold text-gray-900 dark:text-white text-lg">Modern City Apartment</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">123 Example St, Metro City, ST 12345</p>
-              <div class="mt-2 text-primary-600 dark:text-primary-400 font-bold">$2,400 / month</div>
+              <h3 class="font-semibold text-gray-900 dark:text-white text-lg">{{ property.title }}</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ property.address }}</p>
+              <div class="mt-2 text-primary-600 dark:text-primary-400 font-bold">${{ property.price.toLocaleString() }} / month</div>
             </div>
           </div>
 
@@ -80,6 +80,8 @@
 
 <script setup>
 import { reactive, ref, computed } from 'vue'
+import { useProperties } from '../../../composables/useProperties'
+import { useApplications } from '../../../composables/useApplications'
 
 // Only logged in users can apply
 definePageMeta({
@@ -89,8 +91,11 @@ definePageMeta({
 const route = useRoute()
 const propertyId = route.params.id
 
+const { getPropertyById } = useProperties()
+const property = computed(() => getPropertyById(propertyId))
+
 useHead({
-  title: 'Apply for Property - RentalProperty',
+  title: computed(() => property.value ? `Apply for ${property.value.title}` : 'Apply for Property'),
 })
 
 const links = computed(() => [
@@ -98,6 +103,9 @@ const links = computed(() => [
   { label: 'Property Details', to: `/properties/${propertyId}` },
   { label: 'Apply' }
 ])
+
+const { submitApplication } = useApplications()
+const toast = useToast()
 
 const isLoading = ref(false)
 const state = reactive({
@@ -115,8 +123,17 @@ const onSubmit = async () => {
   isLoading.value = true
   // Simulate submission delay
   await new Promise(resolve => setTimeout(resolve, 1500))
-  isLoading.value = false
   
+  if (property.value) {
+    submitApplication(propertyId, property.value.title, state)
+    toast.add({
+      title: 'Application Submitted!',
+      description: 'You can track its status in your dashboard.',
+      color: 'green'
+    })
+  }
+  
+  isLoading.value = false
   // Reroute them to the dashboard applications tab to see it pending
   navigateTo('/dashboard/applications')
 }

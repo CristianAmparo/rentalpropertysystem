@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 md:py-24">
-    <UContainer>
+    <UContainer class="px-4 py-4 md:px-8 md:py-8">
       <div class="max-w-3xl mx-auto text-center">
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl mb-6">
           About Us

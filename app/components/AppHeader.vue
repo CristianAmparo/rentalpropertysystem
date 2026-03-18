@@ -5,8 +5,8 @@
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center gap-2">
-          <NuxtLink to="/" class="flex items-center gap-2 font-bold text-xl text-primary-500">
-            <UIcon name="i-heroicons-home-modern" class="w-8 h-8" />
+          <NuxtLink to="/" class="flex items-center gap-2 font-bold text-lg md:text-xl text-primary-500">
+            <UIcon name="i-heroicons-home-modern" class="w-6 h-6 md:w-8 md:h-8" />
             <span>RentalProperty</span>
           </NuxtLink>
         </div>
@@ -27,9 +27,13 @@
           <template v-else-if="isAuthenticated && user">
             <!-- Custom User Menu Dropdown -->
             <div class="relative">
-              <button @click="isDesktopMenuOpen = !isDesktopMenuOpen" class="flex outline-none rounded-full cursor-pointer transition-transform hover:scale-105 shadow-sm border-2 border-transparent hover:border-primary-500 focus:border-primary-500">
-                <UAvatar v-if="user.avatar" :src="user.avatar" :alt="user.name" size="sm" />
-                <div v-else class="flex items-center justify-center w-8 h-8 rounded-full bg-primary-500 text-white font-bold text-sm">
+              <button @click="isDesktopMenuOpen = !isDesktopMenuOpen" class="flex outline-none rounded-full cursor-pointer transition-transform shadow-sm border-2 border-transparent hover:border-primary-500 focus:border-primary-500">
+                <!-- Avatar Image -->
+                <UAvatar v-if="user.avatar" :src="user.avatar" :alt="user.name" size="2xs" class="md:hidden" />
+                <UAvatar v-if="user.avatar" :src="user.avatar" :alt="user.name" size="sm" class="hidden md:flex" />
+                
+                <!-- Avatar Fallback (Initials) -->
+                <div v-else class="flex items-center justify-center rounded-full bg-primary-500 text-white font-bold text-xs w-6 h-6 md:w-8 md:h-8 md:text-sm">
                   {{ user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'U' }}
                 </div>
               </button>
@@ -92,48 +96,25 @@
 
     <!-- Mobile Floating Bottom Navigation -->
     <div class="md:hidden fixed bottom-4 left-4 right-4 z-60">
-      <div class="bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-800 p-2 flex items-center justify-around text-white">
+      <div class="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-around text-gray-700 dark:text-white transition-colors">
         <div class="flex flex-col items-center">
-          <UButton to="/" variant="ghost" color="white" icon="i-heroicons-home" size="lg" aria-label="Home" />
-          <span class="text-[10px] mt-1 font-medium text-gray-400">Home</span>
+          <UButton to="/" variant="ghost" color="gray" icon="i-heroicons-home" size="lg" aria-label="Home" class="dark:text-white" />
+          <span class="text-[10px] mt-1 font-medium text-gray-500 dark:text-gray-400">Home</span>
         </div>
         
         <div class="flex flex-col items-center">
-          <UButton to="/properties" variant="ghost" color="white" icon="i-heroicons-magnifying-glass" size="lg" aria-label="Browse" />
-          <span class="text-[10px] mt-1 font-medium text-gray-400">Browse</span>
+          <UButton to="/properties" variant="ghost" color="gray" icon="i-heroicons-magnifying-glass" size="lg" aria-label="Browse" class="dark:text-white" />
+          <span class="text-[10px] mt-1 font-medium text-gray-500 dark:text-gray-400">Browse</span>
         </div>
         
         <div class="flex flex-col items-center">
-          <UButton to="/about" variant="ghost" color="white" icon="i-heroicons-information-circle" size="lg" aria-label="About" />
-          <span class="text-[10px] mt-1 font-medium text-gray-400">About</span>
+          <UButton to="/about" variant="ghost" color="gray" icon="i-heroicons-information-circle" size="lg" aria-label="About" class="dark:text-white" />
+          <span class="text-[10px] mt-1 font-medium text-gray-500 dark:text-gray-400">About</span>
         </div>
 
-        <div class="flex flex-col items-center relative">
-          <UButton 
-            variant="ghost" 
-            color="white" 
-            :icon="isMobileMenuOpen ? 'i-heroicons-x-mark' : 'i-heroicons-user'" 
-            size="lg" 
-            aria-label="Account"
-            @click="isMobileMenuOpen = !isMobileMenuOpen" 
-          />
-          <span class="text-[10px] mt-1 font-medium text-gray-400">Account</span>
-          
-          <!-- Auth / Account Popup Menu (Triggered by Hamburger/User icon) -->
-          <div v-if="isMobileMenuOpen" class="absolute bottom-16 right-0 w-48 bg-gray-900 border border-gray-800 rounded-xl shadow-xl overflow-hidden pointer-events-auto origin-bottom-right transition-all">
-            <div class="py-2" v-if="!isAuthenticated">
-              <UButton to="/login" variant="ghost" color="white" label="Log In" block class="justify-start px-4 rounded-none" @click="isMobileMenuOpen = false" />
-              <UButton to="/register" variant="ghost" color="primary" label="Sign Up" block class="justify-start px-4 rounded-none" @click="isMobileMenuOpen = false" />
-            </div>
-            <div class="py-2" v-else>
-              <div class="px-4 py-2 border-b border-gray-800 mb-1">
-                <span class="block text-xs text-gray-400">Signed in as</span>
-                <span class="block text-sm font-medium truncate">{{ user?.email }}</span>
-              </div>
-              <UButton to="/dashboard" variant="ghost" color="white" icon="i-heroicons-squares-2x2" label="Dashboard" block class="justify-start px-4 rounded-none" @click="isMobileMenuOpen = false" />
-              <UButton variant="ghost" color="red" icon="i-heroicons-arrow-right-on-rectangle" label="Log Out" block class="justify-start px-4 rounded-none" @click="() => { isMobileMenuOpen = false; handleLogout() }" />
-            </div>
-          </div>
+        <div class="flex flex-col items-center">
+          <UButton to="/contact" variant="ghost" color="gray" icon="i-heroicons-envelope" size="lg" aria-label="Contact" class="dark:text-white" />
+          <span class="text-[10px] mt-1 font-medium text-gray-500 dark:text-gray-400">Contact</span>
         </div>
       </div>
     </div>
