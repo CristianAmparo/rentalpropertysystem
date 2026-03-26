@@ -49,11 +49,13 @@ useHead({
 })
 
 const { savedPropertyIds } = useProperties()
+const idsQuery = computed(() => savedPropertyIds.value.length > 0 ? savedPropertyIds.value.join(',') : 'none')
+console.log('saved-properties.vue setup! savedPropertyIds.value:', savedPropertyIds.value, 'idsQuery:', idsQuery.value)
 const { data: savedProps, status: savedStatus } = await useFetch('/api/properties', {
-  query: { ids: () => savedPropertyIds.value.length > 0 ? savedPropertyIds.value.join(',') : 'none' }
+  query: { ids: idsQuery }
 })
 
-const savedProperties = computed(() => savedProps.value || [])
+const savedProperties = computed(() => savedProps.value?.data || [])
 
 const links = [
   { label: 'Dashboard', to: '/dashboard' },

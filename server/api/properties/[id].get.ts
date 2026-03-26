@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
       ...property,
       bedrooms: property.beds,
       bathrooms: property.baths,
+      videos: property.videos || [],
       image: property.images && Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : null
     }
   } catch (error: any) {

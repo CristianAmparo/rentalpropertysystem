@@ -64,6 +64,7 @@ export default defineEventHandler(async (event) => {
       ...p,
       bedrooms: p.beds, // Frontend uses bedrooms
       bathrooms: p.baths, // Frontend uses bathrooms
+      videos: p.videos || [], // Explicitly serve videos
       image: p.images && Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : null // provide a primary image
     }))
 

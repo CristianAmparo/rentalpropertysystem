@@ -1,42 +1,49 @@
-import { useState } from '#app'
-
 export interface Application {
   id: string
   propertyId: string
   propertyTitle: string
+  propertyAddress: string
+  propertyImage: string | null
   dateApplied: string
-  status: 'Pending' | 'Under Review' | 'Approved' | 'Declined'
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
   formData: any
+  documents: string[] | null
 }
 
 export const useApplications = () => {
-  const applications = useState<Application[]>('user-applications', () => [])
-
-  const submitApplication = (propertyId: string, propertyTitle: string, formData: any) => {
-    const newApp: Application = {
-      id: Math.random().toString(36).substring(2, 9),
-      propertyId,
-      propertyTitle,
-      dateApplied: new Date().toISOString(),
-      status: 'Pending',
-      formData: { ...formData }
-    }
-    applications.value.unshift(newApp) // Add to beginning of array
-    return newApp
+  // Upload documents to the server
+  const uploadDocuments = async (files: File[]) => {
+    const formData = new FormData()
+    files.forEach(file => formData.append('files', file))
+    
+    return await $fetch<{ success: boolean, urls: string[] }>('/api/applications/upload', {
+      method: 'POST',
+      body: formData
+    })
   }
 
-  const getUserApplications = () => {
-    return applications.value
+  // Submit the final payload to MySQL
+  const submitApplication = async (propertyId: string, formData: any, documents: string[]) => {
+    return await $fetch<{ success: boolean, application: any }>('/api/applications', {
+      method: 'POST',
+      body: { propertyId, formData, documents }
+    })
   }
 
-  const getActiveApplicationsCount = () => {
-    return applications.value.filter(app => ['Pending', 'Under Review'].includes(app.status)).length
+  // Fetch from MySQL
+  const fetchUserApplications = async () => {
+    return await $fetch<Application[]>('/api/applications')
+  }
+
+  const getActiveApplicationsCount = (apps: Application[] | null) => {
+    if (!apps) return 0
+    return apps.filter(app => ['PENDING'].includes(app.status)).length
   }
 
   return {
-    applications,
+    uploadDocuments,
     submitApplication,
-    getUserApplications,
+    fetchUserApplications,
     getActiveApplicationsCount
   }
 }

@@ -12,7 +12,7 @@
         </h2>
         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
           Or
-          <NuxtLink to="/register" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
+          <NuxtLink :to="{ path: '/register', query: route.query }" class="font-medium text-primary-600 hover:text-primary-500 transition-colors">
             create a new account
           </NuxtLink>
         </p>
@@ -54,11 +54,14 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 definePageMeta({
-  layout: false
+  layout: false,
+  middleware: 'guest'
 })
 
+const route = useRoute()
 const { login } = useAuth()
 const isLoading = ref(false)
 const errorMsg = ref('')
@@ -71,7 +74,11 @@ const onSubmit = async () => {
   const result = await login(state)
   
   if (result.success) {
-    navigateTo('/')
+    if (route.query.callback) {
+      navigateTo(route.query.callback)
+    } else {
+      navigateTo('/')
+    }
   } else {
     errorMsg.value = result.error
   }

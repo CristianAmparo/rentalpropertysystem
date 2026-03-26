@@ -4,14 +4,19 @@ export const useAuth = () => {
   const user = useState('auth_user', () => null)
   const isAuthenticated = useState('auth_isAuthenticated', () => false)
   const isLoading = useState('auth_isLoading', () => false)
+  const headers = useRequestHeaders(['cookie'])
 
   const fetchUser = async () => {
     isLoading.value = true
     try {
-      const data = await $fetch<any>('/api/auth/me')
+      const data = await $fetch<any>('/api/auth/me', {
+        headers
+      })
       user.value = data.user
       isAuthenticated.value = true
+
     } catch (error) {
+      console.error("fetchUser auth error:", error)
       user.value = null
       isAuthenticated.value = false
     } finally {
@@ -26,10 +31,12 @@ export const useAuth = () => {
         body: credentials
       })
       // Set an indicator cookie so the frontend knows the user has an active session
-      const authToken = useCookie('auth_token')
-      authToken.value = 'active'
-      
+      const authSession = useCookie('auth_session')
+      authSession.value = 'active'
+
       await fetchUser()
+      const { fetchSavedProperties } = useProperties()
+      await fetchSavedProperties()
       return { success: true, data }
     } catch (error: any) {
       return { success: false, error: error.data?.statusMessage || 'Login failed' }
@@ -42,10 +49,12 @@ export const useAuth = () => {
         method: 'POST',
         body: userData
       })
-      const authToken = useCookie('auth_token')
-      authToken.value = 'active'
+      const authSession = useCookie('auth_session')
+      authSession.value = 'active'
 
       await fetchUser()
+      const { fetchSavedProperties } = useProperties()
+      await fetchSavedProperties()
       return { success: true, data }
     } catch (error: any) {
       return { success: false, error: error.data?.statusMessage || 'Registration failed' }
@@ -56,11 +65,15 @@ export const useAuth = () => {
     try {
       await $fetch('/api/auth/logout', { method: 'POST' })
       // Clear the session indicator cookie
-      const authToken = useCookie('auth_token')
-      authToken.value = null
-      
+      const authSession = useCookie('auth_session')
+      authSession.value = null
+
       user.value = null
       isAuthenticated.value = false
+      
+      const { clearSavedProperties } = useProperties()
+      clearSavedProperties()
+      
       navigateTo('/login')
     } catch (error) {
       console.error('Logout failed', error)

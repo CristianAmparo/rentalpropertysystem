@@ -64,6 +64,10 @@
                         <UIcon name="i-heroicons-home" class="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
                         Dashboard
                       </NuxtLink>
+                      <NuxtLink to="/dashboard/saved-properties" class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" @click="isDesktopMenuOpen = false">
+                        <UIcon name="i-heroicons-heart" class="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
+                        Saved Properties
+                      </NuxtLink>
                       <NuxtLink to="/profile" class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" @click="isDesktopMenuOpen = false">
                         <UIcon name="i-heroicons-user" class="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
                         Profile
@@ -168,6 +172,10 @@ const dropdownItems = computed(() => {
       label: 'Dashboard',
       icon: 'i-heroicons-home',
       to: '/dashboard'
+    }, {
+      label: 'Saved Properties',
+      icon: 'i-heroicons-heart',
+      to: '/dashboard/saved-properties'
     }, {
       label: 'Profile',
       icon: 'i-heroicons-user',

@@ -1,8 +1,8 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const { isAuthenticated } = useAuth()
+  const authSession = useCookie('auth_session')
   
-  // If user is not authenticated, redirect to login page
-  if (!isAuthenticated.value) {
+  // If user lacks an active session cookie, synchronously jump to login
+  if (!authSession.value) {
     return navigateTo('/login')
   }
 })

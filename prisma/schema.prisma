@@ -64,6 +64,7 @@ model Property {
   type          PropertyType
   amenities     Json?     // Storing array of amenities
   images        Json?     // Storing array of image URLs
+  videos        Json?     // Storing array of video URLs
   isVacant      Boolean   @default(true)
   isArchived    Boolean   @default(false)
 

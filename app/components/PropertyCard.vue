@@ -16,7 +16,7 @@
       
       <!-- Price overlay -->
       <div class="absolute bottom-3 left-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 py-1.5 rounded-md font-bold text-primary-600 dark:text-primary-400 shadow-sm">
-        ₱{{ property.price.toLocaleString() }}<span class="text-xs font-normal text-gray-500 dark:text-gray-400"> / mo</span>
+        ₱{{ property.price.toLocaleString('en-US') }}<span class="text-xs font-normal text-gray-500 dark:text-gray-400"> / mo</span>
       </div>
     </div>
 
@@ -53,6 +53,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useProperties } from '../composables/useProperties'
 
 const props = defineProps({
@@ -64,6 +65,9 @@ const props = defineProps({
 
 const imageError = ref(false)
 
+const route = useRoute()
+const router = useRouter()
+const { isAuthenticated } = useAuth()
 const { isPropertySaved, toggleSaveProperty } = useProperties()
 
 const isSaved = computed(() => {
@@ -71,6 +75,10 @@ const isSaved = computed(() => {
 })
 
 const handleSave = () => {
+  if (!isAuthenticated.value) {
+    router.push({ path: '/login', query: { callback: route.fullPath } })
+    return
+  }
   toggleSaveProperty(props.property.id)
 }
 </script>
