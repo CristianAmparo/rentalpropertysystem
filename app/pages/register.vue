@@ -27,12 +27,16 @@
           <UFormGroup name="email">
             <UInput v-model="state.email" size="lg" type="email" placeholder="you@example.com" icon="i-heroicons-envelope" required class="w-full" />
           </UFormGroup>
+          
+          <UFormGroup name="phone">
+            <UInput v-model="state.phone" size="lg" type="tel" placeholder="+63 912 345 6789" icon="i-heroicons-phone" required class="w-full" />
+          </UFormGroup>
 
           <UFormGroup name="password">
             <UInput v-model="state.password" size="lg" type="password" placeholder="••••••••" icon="i-heroicons-lock-closed" required class="w-full" />
           </UFormGroup>
 
-          <UAlert v-if="errorMsg" color="red" variant="soft" class="!p-2">
+          <UAlert v-if="errorMsg" color="red" variant="soft" class="p-2!">
             <template #title>
               <div class="flex items-center justify-center gap-2">
                 <UIcon name="i-heroicons-exclamation-triangle" class="w-5 h-5" />
@@ -63,7 +67,7 @@ const route = useRoute()
 const { register } = useAuth()
 const isLoading = ref(false)
 const errorMsg = ref('')
-const state = reactive({ name: '', email: '', password: '', role: 'USER' })
+const state = reactive({ name: '', email: '', phone: '', password: '', role: 'USER' })
 
 const onSubmit = async () => {
   isLoading.value = true

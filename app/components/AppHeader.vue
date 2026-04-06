@@ -60,6 +60,10 @@
                     </div>
                     
                     <div class="py-1">
+                      <NuxtLink v-if="user.role === 'ADMIN'" to="/admin" class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-colors font-semibold" @click="isDesktopMenuOpen = false">
+                        <UIcon name="i-heroicons-shield-check" class="h-4 w-4" />
+                        Admin Panel
+                      </NuxtLink>
                       <NuxtLink to="/dashboard" class="group flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" @click="isDesktopMenuOpen = false">
                         <UIcon name="i-heroicons-home" class="h-4 w-4 text-gray-400 group-hover:text-primary-500" />
                         Dashboard

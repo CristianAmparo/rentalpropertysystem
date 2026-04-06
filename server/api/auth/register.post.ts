@@ -7,8 +7,8 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { email, password, name, phone, role } = body
 
-    if (!email || !password || !name) {
-      throw createError({ statusCode: 400, statusMessage: 'Email, password, and name are required' })
+    if (!email || !password || !name || !phone) {
+      throw createError({ statusCode: 400, statusMessage: 'Email, password, name, and phone are required' })
     }
 
     const unverifiedRole = role === 'ADMIN' ? 'ADMIN' : 'USER'

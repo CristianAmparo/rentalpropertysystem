@@ -9,12 +9,17 @@
         </div>
       </NuxtLink>
 
-      <!-- Save Button overlay -->
-      <button @click.prevent.stop="handleSave" class="cursor-pointer absolute top-3 right-3 p-2 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-sm hover:scale-110 transition-transform backdrop-blur-sm z-10" :class="[isSaved ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300']" :aria-label="isSaved ? 'Unsave property' : 'Save property'">
-        <UIcon :name="isSaved ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" class="w-5 h-5 flex" />
-      </button>
+        <!-- Save Button overlay -->
+        <button @click.prevent.stop="handleSave" class="cursor-pointer absolute top-3 right-3 p-2 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-sm hover:scale-110 transition-transform backdrop-blur-sm z-10" :class="[isSaved ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300']" :aria-label="isSaved ? 'Unsave property' : 'Save property'">
+          <UIcon :name="isSaved ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" class="w-5 h-5 flex" />
+        </button>
+
+        <!-- Status Badge -->
+        <div v-if="property.isVacant === false" class="absolute top-3 left-3 bg-red-600/90 text-white backdrop-blur-sm px-2.5 py-1 rounded tracking-wide text-xs font-bold uppercase shadow-sm">
+          Occupied
+        </div>
       
-      <!-- Price overlay -->
+        <!-- Price overlay -->
       <div class="absolute bottom-3 left-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 py-1.5 rounded-md font-bold text-primary-600 dark:text-primary-400 shadow-sm">
         ₱{{ property.price.toLocaleString('en-US') }}<span class="text-xs font-normal text-gray-500 dark:text-gray-400"> / mo</span>
       </div>

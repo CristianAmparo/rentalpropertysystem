@@ -29,9 +29,9 @@
               <UInput v-model="state.phone" type="tel" class="w-full" />
             </UFormField>
 
-            <UFormField label="Bio / About Me" name="bio" help="Write a short introduction for property managers.">
+            <!-- <UFormField label="Bio / About Me" name="bio" help="Write a short introduction for property managers.">
               <UTextarea v-model="state.bio" :rows="4" class="w-full" />
-            </UFormField>
+            </UFormField> -->
 
             <div class="flex justify-end pt-4">
               <UButton type="submit" color="primary" :loading="isLoading">
@@ -56,21 +56,51 @@ useHead({
   title: 'My Profile - RentalProperty',
 })
 
-const { user } = useAuth()
+const { user, updateProfile } = useAuth()
+const toast = useToast()
 const isLoading = ref(false)
 
 const state = reactive({
   firstName: user.value?.name?.split(' ')[0] || '',
-  lastName: user.value?.name?.split(' ')[1] || '',
-  phone: '',
-  bio: ''
+  lastName: user.value?.name?.split(' ').slice(1).join(' ') || '',
+  phone: user.value?.phone || '',
 })
 
 const onSubmit = async () => {
-  isLoading.value = true
-  // Simulate API call
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  // TODO: Add actual profile update hook here
-  isLoading.value = false
+  if (isLoading.value) return
+  
+  try {
+    isLoading.value = true
+    
+    const fullName = `${state.firstName} ${state.lastName}`.trim()
+    
+    const result = await updateProfile({
+      name: fullName,
+      phone: state.phone
+    })
+    
+    if (result.success) {
+      toast.add({
+        title: 'Success',
+        description: 'Profile updated successfully',
+        color: 'success'
+      })
+    } else {
+      toast.add({
+        title: 'Error',
+        description: result.error || 'Failed to update profile',
+        color: 'error'
+      })
+    }
+  } catch (error) {
+    console.error('Update profile error:', error)
+    toast.add({
+      title: 'Error',
+      description: 'An unexpected error occurred',
+      color: 'error'
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>

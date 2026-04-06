@@ -37,7 +37,7 @@
               <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ activeAppCount }}</p>
             </div>
           </div>
-          <NuxtLink to="/dashboard/applications" class="text-sm text-yellow-600 hover:text-yellow-500 mt-4 inline-block font-medium">Track status &rarr;</NuxtLink>
+          <NuxtLink to="/dashboard/applications" class="text-sm text-yellow-600 hover:text-yellow-500 mt-4 inline-block font-medium">Waitlist Status &rarr;</NuxtLink>
         </UCard>
 
         <UCard class="bg-white dark:bg-gray-900 ring-1 ring-gray-200 dark:ring-gray-800 shadow-sm hover:shadow-md transition-shadow">
@@ -47,10 +47,20 @@
             </div>
             <div>
               <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Lease</p>
-              <p class="text-2xl font-bold text-gray-900 dark:text-white">None</p>
+              <p v-if="loadingLeases" class="text-2xl font-bold text-gray-400">...</p>
+              <template v-else-if="currentLeases.length > 0">
+                <NuxtLink :to="`/properties/${currentLeases[0].propertyId}`" class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary-600 truncate max-w-[150px] block" :title="currentLeases[0].propertyTitle">
+                  {{ currentLeases[0].propertyTitle }}
+                </NuxtLink>
+              </template>
+              <p v-else class="text-2xl font-bold text-gray-900 dark:text-white">None</p>
             </div>
           </div>
-          <span class="text-sm text-gray-400 mt-4 inline-block">No active rentals</span>
+          <span v-if="currentLeases.length > 0" class="text-sm text-green-600 mt-4 inline-block font-medium flex-nowrap shrink-0">
+             <UIcon name="i-heroicons-check-circle" class="mr-1 relative top-0.5" />
+             Active details
+          </span>
+          <span v-else class="text-sm text-gray-400 mt-4 inline-block">No active rentals</span>
         </UCard>
       </div>
 
@@ -112,8 +122,8 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from 'vue'
+<script setup lang="ts">
+import { computed, ref, onMounted } from 'vue'
 import { useProperties } from '../../composables/useProperties'
 import { useApplications } from '../../composables/useApplications'
 
@@ -125,11 +135,28 @@ useHead({
   title: 'Dashboard - RentalProperty',
 })
 
+import type { Application } from '../../composables/useApplications'
+
 const { user, logout } = useAuth()
 const { savedPropertyIds } = useProperties()
-const { getActiveApplicationsCount } = useApplications()
+const { getActiveApplicationsCount, fetchUserApplications } = useApplications()
 
-const activeAppCount = computed(() => getActiveApplicationsCount())
+const applications = ref<Application[]>([])
+const loadingLeases = ref(true)
+
+onMounted(async () => {
+  try {
+    applications.value = await fetchUserApplications() || []
+  } catch (e) {
+    console.error('Failed to load user applications', e)
+    applications.value = []
+  } finally {
+    loadingLeases.value = false
+  }
+})
+
+const activeAppCount = computed(() => getActiveApplicationsCount(applications.value))
+const currentLeases = computed(() => applications.value.filter(app => app.status === 'APPROVED'))
 
 const handleLogout = async () => {
   await logout()

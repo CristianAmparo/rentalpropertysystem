@@ -1,7 +1,18 @@
 import { ref, readonly } from 'vue'
 
+export interface User {
+  id: string
+  email: string
+  name?: string
+  phone?: string
+  avatar?: string
+  role: 'USER' | 'ADMIN'
+  banned: boolean
+  createdAt: string
+}
+
 export const useAuth = () => {
-  const user = useState('auth_user', () => null)
+  const user = useState<User | null>('auth_user', () => null)
   const isAuthenticated = useState('auth_isAuthenticated', () => false)
   const isLoading = useState('auth_isLoading', () => false)
   const headers = useRequestHeaders(['cookie'])
@@ -80,6 +91,24 @@ export const useAuth = () => {
     }
   }
 
+  const updateProfile = async (data: { name?: string, phone?: string }) => {
+    try {
+      const response = await $fetch<any>('/api/user/update', {
+        method: 'PATCH',
+        body: data
+      })
+      
+      if (response && response.user) {
+        user.value = { ...(user.value || {}), ...response.user }
+        return { success: true, message: response.message }
+      }
+      return { success: false, error: 'Malformed response' }
+    } catch (error: any) {
+      console.error('Profile update failed:', error)
+      return { success: false, error: error.data?.statusMessage || 'Update failed' }
+    }
+  }
+
   return {
     user: readonly(user),
     isAuthenticated: readonly(isAuthenticated),
@@ -87,6 +116,7 @@ export const useAuth = () => {
     fetchUser,
     login,
     register,
-    logout
+    logout,
+    updateProfile
   }
 }

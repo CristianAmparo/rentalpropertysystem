@@ -46,6 +46,15 @@
               </div>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Email & Phone -->
+                <UFormField label="Email Address" name="contactEmail" class="w-full" required>
+                  <UInput v-model="state.contactEmail" type="email" placeholder="john@example.com" size="lg" class="w-full" required />
+                </UFormField>
+                
+                <UFormField label="Mobile Number" name="contactPhone" class="w-full" required>
+                  <UInput v-model="state.contactPhone" type="tel" placeholder="+63 912 345 6789" size="lg" class="w-full" required />
+                </UFormField>
+
                 <!-- Move In Date -->
                 <UFormField label="Desired Move-in Date" name="moveInDate" class="w-full" required>
                   <UPopover :popper="{ placement: 'bottom-start' }" class="w-full">
@@ -128,9 +137,13 @@
               
               <div class="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 text-sm border border-gray-200 dark:border-gray-700 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
+                  <div class="col-span-2">
+                    <span class="text-gray-500 block text-xs uppercase tracking-wider font-semibold">Contact Info</span>
+                    <span class="font-medium dark:text-gray-200">{{ state.contactEmail }} | {{ state.contactPhone }}</span>
+                  </div>
                   <div>
                     <span class="text-gray-500 block text-xs uppercase tracking-wider font-semibold">Move In</span>
-                    <span class="font-medium dark:text-gray-200">{{ state.moveInDate || 'Not specified' }}</span>
+                    <span class="font-medium dark:text-gray-200">{{ state.moveInDate ? df.format(state.moveInDate.toDate(getLocalTimeZone())) : 'Not specified' }}</span>
                   </div>
                   <div>
                     <span class="text-gray-500 block text-xs uppercase tracking-wider font-semibold">Occupants & Pets</span>
@@ -199,6 +212,7 @@ const links = computed(() => [
 
 const { submitApplication, uploadDocuments } = useApplications()
 const toast = useToast()
+const { user } = useAuth()
 
 import { CalendarDate, DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 const df = new DateFormatter('en-US', { dateStyle: 'medium' })
@@ -211,6 +225,8 @@ const currentStep = ref(1)
 
 // Form State
 const state = reactive({
+  contactEmail: '',
+  contactPhone: '',
   moveInDate: null,
   occupants: 1,
   pets: '',
@@ -219,6 +235,13 @@ const state = reactive({
   jobTitle: '',
   income: '',
   agreed: false
+})
+
+onMounted(() => {
+  if (user.value) {
+     state.contactEmail = user.value.email || ''
+     state.contactPhone = user.value.phone || ''
+  }
 })
 
 // File Handling
@@ -259,6 +282,8 @@ const submitFinal = async () => {
     // 2. Submit the complete application payload
     const formPayload = {
       personal: {
+        contactEmail: state.contactEmail,
+        contactPhone: state.contactPhone,
         moveInDate: state.moveInDate,
         occupants: state.occupants,
         pets: state.pets,
